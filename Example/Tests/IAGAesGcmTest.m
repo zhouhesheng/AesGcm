@@ -20,10 +20,10 @@
 - (void)testDesc {
   
     // given
-    NSData *key = [NSData iag_dataWithHexString:@"e0ccded8a211547ed483e183af672f968a7020af13c53306b444a1ead3ebb3b9"];
+    NSData *key = [NSData iag_dataWithHexString:@"3b479df68f7fb8e75f4761e547f9b7d98467534c2c25d7b3dceec198984d43aa"];
     NSData *aad = [NSData data];
-    NSData *plainData = [NSData iag_dataWithHexString:@"0120"];
-    NSData *iv = [NSData iag_dataWithHexString:@"020000000000000000000000"];
+    NSData *plainData = [NSData iag_dataWithHexString:@"170303011b652385cb999f93dfdd38e0fa1287b5cd4fabf3006aaaad1ca4a534d9d9b3bca0ec992d7f2b1a00023d8291dc4c12a99d256888147d197b6d3fd4bb52cd64fd9848938bd04781159d147f6b4e4afb5fbb7160cef2b73b99730e42cb9a20e37673b82095a2438e70f3f886cca351202b815da145f3b6ec984965e2001f860f19a537a41f9a3e8e03e976591902d713879a7563f4fcd90e6f357cb7b0cfafc231a5fcdafb317712c1b74aebec42ab36044e02f10b43dc78ec5d2dfac5d79ec85831a694c6b7b0dd4e75efb0654c8aea10c3bf30f8c5cd9b977dd468b1359b8d8a0fd624b0736fbaf1f2c8aa840953d60ef35fb93297c6839a2d9380f4b9e5e1c242a7de0c97a216d59458d1db0de2b8025dd0e0ff8e55bb0f457bbd67"];
+    NSData *iv = [NSData iag_dataWithHexString:@"030000000000000000000000"];
     IAGCipheredData *cipheredData = [IAGAesGcm cipheredDataByAuthenticatedEncryptingPlainData:plainData
                                                               withAdditionalAuthenticatedData:aad
                                                                       authenticationTagLength:IAGAuthenticationTagLength128
