@@ -17,6 +17,74 @@
 
 @implementation IAGAesGcmTest
 
+- (void)testDesc {
+  
+    // given
+    NSData *key = [NSData iag_dataWithHexString:@"e0ccded8a211547ed483e183af672f968a7020af13c53306b444a1ead3ebb3b9"];
+    NSData *aad = [NSData data];
+    NSData *plainData = [NSData iag_dataWithHexString:@"0120"];
+    NSData *iv = [NSData iag_dataWithHexString:@"020000000000000000000000"];
+    IAGCipheredData *cipheredData = [IAGAesGcm cipheredDataByAuthenticatedEncryptingPlainData:plainData
+                                                              withAdditionalAuthenticatedData:aad
+                                                                      authenticationTagLength:IAGAuthenticationTagLength128
+                                                                         initializationVector:iv
+                                                                                          key:key
+                                                                                        error:nil];
+    NSData *result = [NSData dataWithBytes:cipheredData.cipheredBuffer length:cipheredData.cipheredBufferLength];
+    NSLog(@"cipheredData data is %@", result);
+    NSData *tag = [NSData dataWithBytes:cipheredData.authenticationTag length:cipheredData.authenticationTagLength];
+    NSLog(@"cipheredData tag is %@", tag);
+    
+    
+    NSData *ciphertext = [NSData iag_dataWithHexString:@"4e51"];
+    NSData *authTag = [NSData iag_dataWithHexString:@"2a4c82e806c30310b2d2f2c65529aa20"];
+    cipheredData = [[IAGCipheredData alloc] initWithCipheredBuffer:ciphertext.bytes
+                                                               cipheredBufferLength:ciphertext.length
+                                                                  authenticationTag:authTag.bytes
+                                                            authenticationTagLength:authTag.length];
+    
+    // when
+    plainData = [IAGAesGcm plainDataByAuthenticatedDecryptingCipheredData:cipheredData
+                                                  withAdditionalAuthenticatedData:aad
+                                                             initializationVector:iv
+                                                                              key:key
+                                                                            error:nil];
+    NSLog(@"Now plain Data is %@", plainData);
+}
+
+- (void)testZhouhs {
+    NSData *key = [@"passwordpasswordpasswordpassword" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    u_char ivBytes[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    NSData *iv = [NSData dataWithBytes:ivBytes length:sizeof(ivBytes)];
+
+    NSData *aad = [@"" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // Authenticated Encryption Function
+    NSData *expectedPlainData = [@"source - aes256gcm" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // The returned ciphered data is a simple class with 2 properties: the actual encrypted data and the authentication tag.
+    // The authentication tag can have multiple sizes and it is up to you to set one, in this case the size is 128 bits
+    // (16 bytes)
+    IAGCipheredData *cipheredData = [IAGAesGcm cipheredDataByAuthenticatedEncryptingPlainData:expectedPlainData
+                                                              withAdditionalAuthenticatedData:aad
+                                                                      authenticationTagLength:IAGAuthenticationTagLength128
+                                                                         initializationVector:iv
+                                                                                          key:key
+                                                                                        error:nil];
+    NSData *result = [NSData dataWithBytes:cipheredData.cipheredBuffer length:cipheredData.cipheredBufferLength];
+    NSLog(@"cipheredData data is %@", result);
+    NSData *tag = [NSData dataWithBytes:cipheredData.authenticationTag length:cipheredData.authenticationTagLength];
+    NSLog(@"cipheredData tag is %@", tag);
+    // Authenticated Decryption Function
+    NSData *plainData = [IAGAesGcm plainDataByAuthenticatedDecryptingCipheredData:cipheredData
+                                                  withAdditionalAuthenticatedData:aad
+                                                             initializationVector:iv
+                                                                              key:key
+                                                                            error:nil];
+    
+    XCTAssertEqualObjects(expectedPlainData, plainData);}
+
 - (void)test128BitZeroKeyEmptyPlaintextEmptyAad96BitZeroIvAnd128BitAuthTagLength_authenticatedEncryptingPlainData_returnsExpectedCipherData
 {
     // given
